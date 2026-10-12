@@ -1,0 +1,40 @@
+<%- include('../partials/header', { title }) %>
+
+<div class="container narrow">
+  <h1>Your cart</h1>
+
+  <% if(items.length === 0){ %>
+    <div class="empty-state">
+      <p>Your cart is empty.</p>
+      <a href="/" class="btn btn-primary">Browse products</a>
+    </div>
+  <% } else { %>
+    <div class="cart-list">
+      <% items.forEach(function(item){ %>
+        <div class="cart-row">
+          <div class="cart-row-info">
+            <div class="cart-row-name"><%= item.product.name %></div>
+            <div class="cart-row-vendor"><%= item.product.business_name %></div>
+            <div class="cart-row-price"><%= formatIDR(item.product.price) %> each</div>
+          </div>
+          <form action="/cart/update" method="POST" class="cart-row-qty">
+            <input type="hidden" name="productId" value="<%= item.productId %>">
+            <input type="number" name="quantity" value="<%= item.quantity %>" min="0" max="<%= item.product.stock %>" onchange="this.form.submit()">
+          </form>
+          <div class="cart-row-subtotal"><%= formatIDR(item.product.price * item.quantity) %></div>
+          <form action="/cart/remove" method="POST">
+            <input type="hidden" name="productId" value="<%= item.productId %>">
+            <button type="submit" class="btn-remove" aria-label="Remove">&times;</button>
+          </form>
+        </div>
+      <% }) %>
+    </div>
+
+    <div class="cart-summary">
+      <div class="cart-total">Total: <strong><%= formatIDR(total) %></strong></div>
+      <a href="/checkout" class="btn btn-primary btn-large">Proceed to checkout</a>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../partials/footer') %>

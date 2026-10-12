@@ -1,0 +1,56 @@
+<%- include('../partials/header', { title }) %>
+
+<div class="container narrow">
+  <div class="form-card">
+    <h1>Business profile</h1>
+    <p class="form-subtitle">This is what buyers see on your product pages.</p>
+
+    <% if(errors.length > 0){ %>
+      <div class="alert alert-error">
+        <ul>
+          <% errors.forEach(function(err){ %><li><%= err.msg %></li><% }) %>
+        </ul>
+      </div>
+    <% } %>
+
+    <div class="profile-logo-preview">
+      <img src="<%= vendor.logo_url %>" alt="<%= vendor.business_name %> logo" id="logoPreview">
+    </div>
+
+    <form action="/vendor/profile" method="POST" class="stacked-form">
+      <label class="field-full">
+        <span>Business name</span>
+        <input type="text" name="businessName" value="<%= vendor.business_name || '' %>" required>
+      </label>
+
+      <label class="field-full">
+        <span>Description</span>
+        <textarea name="description" rows="3"><%= vendor.description || '' %></textarea>
+      </label>
+
+      <label class="field-full">
+        <span>Location</span>
+        <input type="text" name="location" value="<%= vendor.location || '' %>" placeholder="e.g. Bekasi, Jawa Barat">
+      </label>
+
+      <label class="field-full">
+        <span>Logo / photo URL</span>
+        <input type="url" name="logoUrl" id="logoUrlInput" value="<%= vendor.logo_url || '' %>" placeholder="https://...">
+      </label>
+
+      <button type="submit" class="btn btn-primary btn-full">Save changes</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  (function(){
+    var input = document.getElementById('logoUrlInput');
+    var preview = document.getElementById('logoPreview');
+    input.addEventListener('input', function(){
+      if(input.value) preview.src = input.value;
+    });
+  })();
+</script>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,4 @@
+<% var labels = { unpaid: 'Awaiting payment', paid: 'Paid', expired: 'Payment expired', refund_needed: 'Refund pending' }; %>
+<% if(!(order.status === 'cancelled' && order.payment_status === 'unpaid')){ %>
+  <span class="pay-badge pay-<%= order.payment_status %>"><%= labels[order.payment_status] || order.payment_status %></span>
+<% } %>

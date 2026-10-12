@@ -1,0 +1,37 @@
+<%- include('../partials/header', { title }) %>
+
+<div class="container narrow">
+  <h1>Checkout</h1>
+
+  <% if(errors.length > 0){ %>
+    <div class="alert alert-error">
+      <ul>
+        <% errors.forEach(function(err){ %><li><%= err.msg %></li><% }) %>
+      </ul>
+    </div>
+  <% } %>
+
+  <div class="checkout-summary">
+    <% items.forEach(function(item){ %>
+      <div class="checkout-line">
+        <span><%= item.product.name %> &times; <%= item.quantity %></span>
+        <span><%= formatIDR(item.product.price * item.quantity) %></span>
+      </div>
+    <% }) %>
+    <div class="checkout-line checkout-total">
+      <span>Total</span>
+      <span><%= formatIDR(total) %></span>
+    </div>
+  </div>
+
+  <form action="/checkout" method="POST" class="stacked-form">
+    <label class="field-full">
+      <span>Shipping / delivery address</span>
+      <textarea name="shippingAddress" rows="4" required placeholder="Full address including city and postal code"></textarea>
+    </label>
+    <p class="form-subtitle">Next you'll pay with QRIS. The order is held for you while you pay.</p>
+    <button type="submit" class="btn btn-primary btn-full">Place order &amp; pay with QRIS</button>
+  </form>
+</div>
+
+<%- include('../partials/footer') %>

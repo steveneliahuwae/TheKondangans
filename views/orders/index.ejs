@@ -1,0 +1,27 @@
+<%- include('../partials/header', { title }) %>
+
+<div class="container narrow">
+  <h1><%= currentUser.role === 'vendor' ? 'Orders for my products' : 'My orders' %></h1>
+
+  <% if(orders.length === 0){ %>
+    <div class="empty-state">
+      <p>No orders yet.</p>
+    </div>
+  <% } else { %>
+    <div class="order-list">
+      <% orders.forEach(function(order){ %>
+        <a href="/orders/<%= order.id %>" class="order-row">
+          <div class="order-row-id">Order #<%= order.id %></div>
+          <div class="order-row-date"><%= formatDate(order.created_at) %></div>
+          <div class="order-row-total"><%= formatIDR(order.total) %></div>
+          <div class="order-badges">
+            <div class="status-badge status-<%= order.status %>"><%= order.status %></div>
+            <%- include('../partials/pay-badge', { order }) %>
+          </div>
+        </a>
+      <% }) %>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../partials/footer') %>

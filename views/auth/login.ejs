@@ -1,0 +1,35 @@
+<%- include('../partials/header', { title }) %>
+
+<div class="container narrow">
+  <div class="form-card">
+    <h1>Log in</h1>
+
+    <% if(error){ %>
+      <div class="alert alert-error"><%= error %></div>
+    <% } %>
+
+    <form action="/login" method="POST" class="stacked-form">
+      <label class="field-full">
+        <span>Email</span>
+        <input type="email" name="email" value="<%= old.email || '' %>" required autofocus>
+      </label>
+      <label class="field-full">
+        <span>Password</span>
+        <input type="password" name="password" required>
+      </label>
+      <button type="submit" class="btn btn-primary btn-full">Log in</button>
+    </form>
+
+    <p class="form-footer-link">Don't have an account? <a href="/register">Sign up</a></p>
+
+    <div class="demo-hint">
+      <strong>Demo accounts</strong> (password: <code>password123</code>)
+      <ul>
+        <li>Buyer: buyer@example.com</li>
+        <li>Vendor: vendor1@example.com</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

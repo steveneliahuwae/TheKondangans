@@ -1,0 +1,64 @@
+<%- include('../partials/header', { title }) %>
+
+<div class="container narrow">
+  <a href="/orders/<%= order.id %>" class="back-link">&larr; Back to order #<%= order.id %></a>
+
+  <div class="pay-card" id="payCard"
+       data-order="<%= order.id %>"
+       data-state="<%= state %>"
+       data-expires="<%= expiresAt || '' %>">
+
+    <% if(state === 'active'){ %>
+      <h1>Pay with QRIS</h1>
+      <div class="pay-amount"><%= formatIDR(order.total) %></div>
+      <p class="pay-sub">Order #<%= order.id %> &middot; scan with any banking or e-wallet app</p>
+
+      <div class="qr-box" id="qrBox"><%- qrSvg %></div>
+
+      <div class="pay-timer">Code expires in <strong id="countdown">--:--</strong></div>
+      <div class="pay-status" id="payStatus"><span class="spinner" aria-hidden="true"></span> Waiting for your payment&hellip;</div>
+
+      <ol class="pay-steps">
+        <li>Open GoPay, OVO, DANA, ShopeePay, LinkAja or your mobile banking app.</li>
+        <li>Choose <strong>Scan / Pay</strong> and scan this code.</li>
+        <li>Check that the amount is <strong><%= formatIDR(order.total) %></strong> and confirm.</li>
+      </ol>
+
+      <div class="pay-secure">
+        <%- icon('shield') %>
+        <span>Your payment is handled by the payment provider, not by this site. We never see your PIN or account details, and an order is only marked paid after the provider confirms it.</span>
+      </div>
+
+      <% if(sandbox){ %>
+        <div class="pay-sandbox">
+          <strong>Sandbox mode</strong>
+          <p>This is a test code. Real banking apps can't scan or pay it. Use these buttons to pretend the provider reported a result:</p>
+          <form action="/dev/simulate-payment/<%= order.id %>" method="POST" class="pay-sandbox-actions">
+            <button type="submit" name="outcome" value="paid" class="btn btn-primary btn-small">Simulate successful payment</button>
+            <button type="submit" name="outcome" value="failed" class="btn btn-ghost btn-small">Simulate declined</button>
+            <button type="submit" name="outcome" value="expired" class="btn btn-ghost btn-small">Simulate expiry</button>
+          </form>
+        </div>
+      <% } %>
+
+    <% } else if(state === 'expired'){ %>
+      <h1>This QR code has expired</h1>
+      <p class="pay-sub">The time to pay for order #<%= order.id %> ran out. Unpaid orders are cancelled shortly after, and the items go back in stock.</p>
+      <a href="/orders/<%= order.id %>" class="btn btn-primary">View order</a>
+
+    <% } else if(state === 'closed'){ %>
+      <h1>This order can no longer be paid</h1>
+      <p class="pay-sub">Order #<%= order.id %> is <%= order.status %>.</p>
+      <a href="/orders/<%= order.id %>" class="btn btn-primary">View order</a>
+
+    <% } else { %>
+      <h1>We couldn't create the QR code</h1>
+      <p class="pay-sub">The payment provider didn't respond. Nothing was charged. Please try again in a moment.</p>
+      <a href="/orders/<%= order.id %>/pay" class="btn btn-primary">Try again</a>
+    <% } %>
+  </div>
+</div>
+
+<script src="/js/payment.js" defer></script>
+
+<%- include('../partials/footer') %>

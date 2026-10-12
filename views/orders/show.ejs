@@ -1,0 +1,63 @@
+<%- include('../partials/header', { title }) %>
+
+<div class="container narrow">
+  <a href="/orders" class="back-link">&larr; Back to orders</a>
+
+  <div class="order-detail-head">
+    <h1>Order #<%= order.id %></h1>
+    <div class="order-badges">
+      <div class="status-badge status-<%= order.status %>"><%= order.status %></div>
+      <%- include('../partials/pay-badge', { order }) %>
+    </div>
+  </div>
+  <p class="order-meta">Placed on <%= formatDate(order.created_at) %> by <%= buyer.name %> (<%= buyer.email %>)</p>
+
+  <div class="order-items-list">
+    <% items.forEach(function(item){ %>
+      <div class="checkout-line">
+        <span><%= item.product_name %> &times; <%= item.quantity %></span>
+        <span><%= formatIDR(item.unit_price * item.quantity) %></span>
+      </div>
+    <% }) %>
+    <div class="checkout-line checkout-total">
+      <span>Total</span>
+      <span><%= formatIDR(order.total) %></span>
+    </div>
+  </div>
+
+  <div class="order-shipping">
+    <strong>Shipping address</strong>
+    <p><%= order.shipping_address %></p>
+  </div>
+
+  <% if(canPay){ %>
+    <div class="pay-callout">
+      <div>
+        <strong>Payment needed</strong>
+        <span>Pay <%= formatIDR(order.total) %> with QRIS to confirm this order.</span>
+      </div>
+      <a href="/orders/<%= order.id %>/pay" class="btn btn-primary">Pay with QRIS</a>
+    </div>
+  <% } %>
+  <% if(waitingForPayment){ %>
+    <p class="form-subtitle">Waiting for the buyer to pay. You can confirm and ship this order once it is paid.</p>
+  <% } %>
+  <% if(isOwner && order.payment_status === 'refund_needed'){ %>
+    <div class="alert alert-error">We received your payment after this order was cancelled. It will be refunded to you.</div>
+  <% } %>
+
+  <div class="order-actions">
+    <% if(canAdvance && nextStatus){ %>
+      <form action="/orders/<%= order.id %>/advance" method="POST" class="inline-form">
+        <button type="submit" class="btn btn-primary">Mark as <%= nextStatus %></button>
+      </form>
+    <% } %>
+    <% if(canCancel){ %>
+      <form action="/orders/<%= order.id %>/cancel" method="POST" class="inline-form">
+        <button type="submit" class="btn btn-ghost">Cancel order</button>
+      </form>
+    <% } %>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

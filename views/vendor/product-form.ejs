@@ -1,0 +1,57 @@
+<%- include('../partials/header', { title }) %>
+
+<div class="container narrow">
+  <div class="form-card">
+    <h1><%= product ? 'Edit product' : 'Add product' %></h1>
+
+    <% if(errors.length > 0){ %>
+      <div class="alert alert-error">
+        <ul>
+          <% errors.forEach(function(err){ %><li><%= err.msg %></li><% }) %>
+        </ul>
+      </div>
+    <% } %>
+
+    <form action="<%= product ? '/vendor/products/' + product.id + '/edit' : '/vendor/products/new' %>" method="POST" class="stacked-form">
+      <label class="field-full">
+        <span>Product name</span>
+        <input type="text" name="name" value="<%= (product && product.name) || old.name || '' %>" required>
+      </label>
+
+      <label class="field-full">
+        <span>Description</span>
+        <textarea name="description" rows="4"><%= (product && product.description) || old.description || '' %></textarea>
+      </label>
+
+      <div class="field-row">
+        <label>
+          <span>Price (IDR)</span>
+          <input type="number" name="price" min="0" value="<%= (product && product.price) || old.price || '' %>" required>
+        </label>
+        <label>
+          <span>Stock quantity</span>
+          <input type="number" name="stock" min="0" value="<%= product ? product.stock : (old.stock || '') %>" required>
+        </label>
+      </div>
+
+      <label class="field-full">
+        <span>Category</span>
+        <select name="categoryId">
+          <option value="">— None —</option>
+          <% categories.forEach(function(cat){ %>
+            <option value="<%= cat.id %>" <%= (product && product.category_id === cat.id) ? 'selected' : '' %>><%= cat.name %></option>
+          <% }) %>
+        </select>
+      </label>
+
+      <label class="field-full">
+        <span>Image URL (optional)</span>
+        <input type="url" name="imageUrl" value="<%= (product && product.image_url) || old.imageUrl || '' %>" placeholder="https://...">
+      </label>
+
+      <button type="submit" class="btn btn-primary btn-full"><%= product ? 'Save changes' : 'Add product' %></button>
+    </form>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,167 @@
+<%- include('../partials/header', { title, hideHeaderSearch: true }) %>
+
+<div class="container">
+
+  <!-- Hero: food photo behind the search bar -->
+  <section class="hero">
+    <div class="hero-content">
+      <span class="hero-pill"><%- icon('shield') %> Verified local vendors</span>
+      <h1>Everything for your next kondangan, in one place</h1>
+      <p>Order catering, decoration, souvenirs and more straight from local UMKM vendors.</p>
+
+      <form class="hero-search" action="/" method="GET">
+        <%- icon('search') %>
+        <input type="text" name="q" placeholder="Search nasi box, backdrop, souvenir..." value="<%= query %>" aria-label="Search products">
+        <button type="submit" class="btn btn-primary">Search</button>
+      </form>
+
+      <div class="hero-chips">
+        <span>Popular:</span>
+        <a href="/?q=nasi">Nasi box</a>
+        <a href="/?q=cake">Wedding cake</a>
+        <a href="/?q=backdrop">Backdrop</a>
+        <a href="/?q=foto">Photography</a>
+        <a href="/?q=souvenir">Souvenirs</a>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- Sliding vendor showcase -->
+<% if(showcase.length > 0){ %>
+<section class="showcase" aria-label="Popular vendors">
+  <div class="container showcase-head">
+    <div>
+      <h2>Popular vendors</h2>
+      <p>Meet the UMKM sellers behind the products — ranked by what buyers order most.</p>
+    </div>
+    <div class="showcase-controls">
+      <span class="showcase-count"><%= showcaseCount %> vendors</span>
+      <button type="button" class="marquee-toggle" id="marqueeToggle" aria-pressed="false" aria-label="Pause sliding" title="Pause / play">
+        <svg class="icon-pause" viewBox="0 0 14 14" aria-hidden="true"><rect x="2" y="1" width="3.6" height="12" rx="1"/><rect x="8.4" y="1" width="3.6" height="12" rx="1"/></svg>
+        <svg class="icon-play" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.5v11l9-5.5-9-5.5Z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="marquee-wrap" id="vendorSlider">
+    <button type="button" class="marquee-btn prev" aria-label="Previous vendors">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg>
+    </button>
+    <button type="button" class="marquee-btn next" aria-label="Next vendors">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
+    </button>
+
+    <div class="marquee" data-speed="45" tabindex="0" role="region" aria-label="Vendors, scroll sideways to browse. Arrow keys also work.">
+      <div class="marquee-track">
+        <div class="marquee-set">
+          <% showcase.forEach(function(v){ %><%- include('../partials/vendor-slide', { v }) %><% }) %>
+        </div>
+        <div class="marquee-set" aria-hidden="true">
+          <% showcase.forEach(function(v){ %><%- include('../partials/vendor-slide', { v, duplicate: true }) %><% }) %>
+        </div>
+        <div class="marquee-set" aria-hidden="true">
+          <% showcase.forEach(function(v){ %><%- include('../partials/vendor-slide', { v, duplicate: true }) %><% }) %>
+        </div>
+      </div>
+    </div>
+
+    <div class="marquee-hint">Paused — scroll sideways or drag to browse</div>
+  </div>
+</section>
+<script src="/js/marquee.js" defer></script>
+<% } %>
+
+<div class="container">
+
+  <!-- Categories -->
+  <section class="section">
+    <div class="section-head"><h2>Browse categories</h2></div>
+    <div class="category-tiles">
+      <% categories.forEach(function(c, i){ %>
+        <a href="/?category=<%= c.id %>#catalog" class="category-tile tone-<%= i % 5 %> <%= activeCategory === c.id ? 'active' : '' %>">
+          <span class="category-tile-icon"><%- categoryIcon(c.name) %></span>
+          <span class="category-tile-name"><%= c.name %></span>
+        </a>
+      <% }) %>
+    </div>
+  </section>
+
+  <!-- Value props -->
+  <section class="value-props">
+    <div class="value-prop tone-0"><span class="value-prop-icon"><%- icon('shield') %></span><div><strong>Verified vendors</strong><span>Real local UMKM sellers</span></div></div>
+    <div class="value-prop tone-1"><span class="value-prop-icon"><%- icon('box') %></span><div><strong>Bulk &amp; event orders</strong><span>Made for big gatherings</span></div></div>
+    <div class="value-prop tone-2"><span class="value-prop-icon"><%- icon('receipt') %></span><div><strong>Track every order</strong><span>From pending to completed</span></div></div>
+    <div class="value-prop tone-3"><span class="value-prop-icon"><%- icon('store') %></span><div><strong>Support local</strong><span>Buy straight from the maker</span></div></div>
+  </section>
+
+  <!-- Catalog -->
+  <section class="section catalog-panel" id="catalog">
+    <div class="catalog-layout">
+
+      <aside class="filter-sidebar">
+        <form action="/#catalog" method="GET" id="filterForm">
+          <% if(query){ %><input type="hidden" name="q" value="<%= query %>"><% } %>
+          <% if(activeCategory){ %><input type="hidden" name="category" value="<%= activeCategory %>"><% } %>
+          <% if(activeVendor){ %><input type="hidden" name="vendor" value="<%= activeVendor %>"><% } %>
+
+          <h3>Category</h3>
+          <ul class="category-list">
+            <li class="<%= !activeCategory ? 'active' : '' %>"><a href="/#catalog">All categories</a></li>
+            <% categories.forEach(function(cat){ %>
+              <li class="<%= activeCategory === cat.id ? 'active' : '' %>">
+                <a href="/?category=<%= cat.id %>#catalog"><%= cat.name %></a>
+              </li>
+            <% }) %>
+          </ul>
+
+          <h3 class="filter-heading">Price (Rp)</h3>
+          <div class="price-inputs">
+            <input type="number" name="minPrice" min="0" placeholder="Min" value="<%= minPrice %>">
+            <span>–</span>
+            <input type="number" name="maxPrice" min="0" placeholder="Max" value="<%= maxPrice %>">
+          </div>
+          <button type="submit" class="btn btn-primary btn-small btn-full">Apply</button>
+          <% if(hasFilters){ %><a href="/#catalog" class="filter-reset">Reset all filters</a><% } %>
+        </form>
+      </aside>
+
+      <div class="catalog-main">
+        <div class="catalog-toolbar">
+          <div class="catalog-count">
+            <strong><%= products.length %></strong> product<%= products.length === 1 ? '' : 's' %>
+            <% if(query){ %> for "<%= query %>"<% } %>
+            <% if(activeVendorName){ %> from <%= activeVendorName %><% } %>
+          </div>
+          <label class="sort-control">
+            <span>Sort by</span>
+            <select name="sort" form="filterForm" onchange="this.form.submit()">
+              <option value="newest" <%= sort === 'newest' ? 'selected' : '' %>>Newest</option>
+              <option value="popular" <%= sort === 'popular' ? 'selected' : '' %>>Best selling</option>
+              <option value="price_asc" <%= sort === 'price_asc' ? 'selected' : '' %>>Price: low to high</option>
+              <option value="price_desc" <%= sort === 'price_desc' ? 'selected' : '' %>>Price: high to low</option>
+            </select>
+          </label>
+        </div>
+
+        <% if(products.length === 0){ %>
+          <div class="empty-state">
+            <p>No products match your search or filters.</p>
+            <a href="/#catalog" class="btn btn-primary">Clear filters</a>
+          </div>
+        <% } else { %>
+          <div class="product-grid">
+            <% products.forEach(function(p){ %>
+              <%- include('../partials/product-card', { p }) %>
+            <% }) %>
+          </div>
+        <% } %>
+      </div>
+
+    </div>
+  </section>
+
+</div>
+
+<%- include('../partials/footer') %>

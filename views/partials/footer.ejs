@@ -1,0 +1,47 @@
+<% var footCats = (locals.navCategories || []).slice(0, 5); %>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-about">
+      <div class="footer-brand">The Kondangans</div>
+      <p>A marketplace connecting event organizers with local UMKM vendors — catering, decoration, souvenirs and more.</p>
+    </div>
+    <div>
+      <h4>Shop</h4>
+      <ul>
+        <% footCats.forEach(function(c){ %>
+          <li><a href="/?category=<%= c.id %>"><%= c.name %></a></li>
+        <% }) %>
+      </ul>
+    </div>
+    <div>
+      <h4>Vendors</h4>
+      <ul>
+        <% if(currentUser && currentUser.role === 'vendor'){ %>
+          <li><a href="/vendor/dashboard">Vendor centre</a></li>
+          <li><a href="/vendor/products/new">Add a product</a></li>
+        <% } else { %>
+          <li><a href="/register">Become a vendor</a></li>
+        <% } %>
+      </ul>
+    </div>
+    <div>
+      <h4>Account</h4>
+      <ul>
+        <% if(currentUser){ %>
+          <li><a href="/orders">Orders</a></li>
+        <% } else { %>
+          <li><a href="/login">Log in</a></li>
+          <li><a href="/register">Sign up</a></li>
+        <% } %>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="container">&copy; <%= new Date().getFullYear() %> The Kondangans</div>
+  </div>
+</footer>
+
+</body>
+</html>

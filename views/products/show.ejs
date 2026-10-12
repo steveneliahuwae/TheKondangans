@@ -1,0 +1,106 @@
+<%- include('../partials/header', { title }) %>
+
+<div class="container fixed">
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    <a href="/">Home</a><span>/</span>
+    <% if(product.category_name){ %><a href="/?category=<%= product.category_id %>"><%= product.category_name %></a><span>/</span><% } %>
+    <span class="current"><%= product.name %></span>
+  </nav>
+
+  <div class="pdp">
+
+    <div class="pdp-gallery">
+      <div class="product-card-placeholder cat-<%= (product.category_id || 0) % 6 %>">
+        <%- categoryIcon(product.category_name) %>
+      </div>
+      <% if(product.image_url){ %>
+        <img src="<%= product.image_url %>" alt="<%= product.name %>" onerror="this.remove()">
+      <% } %>
+    </div>
+
+    <div class="pdp-info">
+      <h1><%= product.name %></h1>
+      <div class="pdp-stats">
+        <% if(product.sold > 0){ %><span><strong><%= product.sold %></strong> sold</span><% } %>
+        <% if(product.category_name){ %><span class="pdp-tag"><%= product.category_name %></span><% } %>
+      </div>
+      <div class="pdp-price"><%= formatIDR(product.price) %></div>
+
+      <h3 class="pdp-heading">Description</h3>
+      <p class="pdp-desc"><%= product.description || 'No description provided.' %></p>
+
+      <a href="/?vendor=<%= product.vendor_id %>" class="vendor-card">
+        <img src="<%= product.vendor_logo %>" alt="<%= product.business_name %> logo" class="vendor-card-logo">
+        <div class="vendor-card-text">
+          <div class="vendor-card-name"><%= product.business_name %></div>
+          <div class="vendor-card-location"><%- icon('pin') %><%= product.location %></div>
+          <% if(product.vendor_description){ %><p><%= product.vendor_description %></p><% } %>
+        </div>
+      </a>
+    </div>
+
+    <aside class="pdp-buy">
+      <h3>Order this product</h3>
+
+      <% if(product.stock <= 0){ %>
+        <p class="out-of-stock">Out of stock</p>
+      <% } else if(currentUser && currentUser.role === 'buyer'){ %>
+        <form action="/cart/add" method="POST">
+          <input type="hidden" name="productId" value="<%= product.id %>">
+          <div class="qty-row">
+            <span>Quantity</span>
+            <div class="stepper">
+              <button type="button" id="qtyMinus" aria-label="Decrease">−</button>
+              <input type="number" name="quantity" id="qty" value="1" min="1" max="<%= product.stock %>" data-price="<%= product.price %>">
+              <button type="button" id="qtyPlus" aria-label="Increase">+</button>
+            </div>
+          </div>
+          <div class="stock-note"><%= product.stock %> in stock</div>
+          <div class="subtotal-row"><span>Subtotal</span><strong id="subtotal"><%= formatIDR(product.price) %></strong></div>
+          <button type="submit" class="btn btn-primary btn-full btn-large">Add to cart</button>
+        </form>
+      <% } else if(!currentUser){ %>
+        <div class="stock-note"><%= product.stock %> in stock</div>
+        <a href="/login" class="btn btn-primary btn-full btn-large">Log in to order</a>
+      <% } else { %>
+        <p class="form-subtitle">Vendor accounts can't place orders. Log in with a buyer account to order.</p>
+      <% } %>
+    </aside>
+  </div>
+
+  <% if(moreFromVendor.length > 0){ %>
+    <section class="section">
+      <div class="section-head">
+        <h2>More from <%= product.business_name %></h2>
+        <a href="/?vendor=<%= product.vendor_id %>" class="section-link">See all</a>
+      </div>
+      <div class="product-grid">
+        <% moreFromVendor.forEach(function(p){ %>
+          <%- include('../partials/product-card', { p }) %>
+        <% }) %>
+      </div>
+    </section>
+  <% } %>
+</div>
+
+<script>
+  (function(){
+    var input = document.getElementById('qty');
+    if(!input) return;
+    var price = Number(input.getAttribute('data-price'));
+    var max = Number(input.getAttribute('max')) || 1;
+    var subtotal = document.getElementById('subtotal');
+
+    function update(){
+      var v = parseInt(input.value, 10) || 1;
+      v = Math.min(Math.max(1, v), max);
+      input.value = v;
+      subtotal.textContent = 'Rp' + (price * v).toLocaleString('id-ID');
+    }
+    document.getElementById('qtyMinus').addEventListener('click', function(){ input.value = (parseInt(input.value, 10) || 1) - 1; update(); });
+    document.getElementById('qtyPlus').addEventListener('click', function(){ input.value = (parseInt(input.value, 10) || 1) + 1; update(); });
+    input.addEventListener('input', update);
+  })();
+</script>
+
+<%- include('../partials/footer') %>

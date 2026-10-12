@@ -1,0 +1,21 @@
+<a href="/products/<%= p.id %>" class="product-card">
+  <div class="product-card-image">
+    <div class="product-card-placeholder cat-<%= (p.category_id || 0) % 6 %>">
+      <%- categoryIcon(p.category_name) %>
+    </div>
+    <% if(p.image_url){ %>
+      <img src="<%= p.image_url %>" alt="<%= p.name %>" loading="lazy" onerror="this.remove()">
+    <% } %>
+  </div>
+  <div class="product-card-body">
+    <div class="product-card-name"><%= p.name %></div>
+    <div class="product-card-price"><%= formatIDR(p.price) %></div>
+    <div class="product-card-meta">
+      <%- icon('pin') %><span><%= p.location || 'Indonesia' %></span>
+    </div>
+    <div class="product-card-meta">
+      <img src="<%= p.vendor_logo %>" alt="" class="product-card-vendor-logo"><span><%= p.business_name %></span>
+    </div>
+    <% if(p.sold > 0){ %><div class="product-card-sold"><%= p.sold %> sold</div><% } %>
+  </div>
+</a>

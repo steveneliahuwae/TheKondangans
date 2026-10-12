@@ -1,0 +1,90 @@
+<%- include('../partials/header', { title }) %>
+
+<div class="container narrow">
+  <div class="form-card">
+    <h1>Create an account</h1>
+    <p class="form-subtitle">Join as a buyer to shop from local vendors, or as a vendor to sell to event organizers.</p>
+
+    <% if(errors.length > 0){ %>
+      <div class="alert alert-error">
+        <ul>
+          <% errors.forEach(function(err){ %>
+            <li><%= err.msg %></li>
+          <% }) %>
+        </ul>
+      </div>
+    <% } %>
+
+    <form action="/register" method="POST" class="stacked-form" id="registerForm">
+      <div class="field-row">
+        <label>
+          <span>Full name</span>
+          <input type="text" name="name" value="<%= old.name || '' %>" required>
+        </label>
+        <label>
+          <span>Email</span>
+          <input type="email" name="email" value="<%= old.email || '' %>" required>
+        </label>
+      </div>
+
+      <div class="field-row">
+        <label>
+          <span>Password</span>
+          <input type="password" name="password" minlength="8" required>
+        </label>
+        <label>
+          <span>Confirm password</span>
+          <input type="password" name="confirmPassword" minlength="8" required>
+        </label>
+      </div>
+
+      <label class="field-full">
+        <span>I am signing up as a...</span>
+        <div class="role-toggle">
+          <label class="role-option">
+            <input type="radio" name="role" value="buyer" <%= old.role !== 'vendor' ? 'checked' : '' %>>
+            <span>Buyer / Event Organizer</span>
+          </label>
+          <label class="role-option">
+            <input type="radio" name="role" value="vendor" <%= old.role === 'vendor' ? 'checked' : '' %>>
+            <span>Vendor / UMKM Seller</span>
+          </label>
+        </div>
+      </label>
+
+      <div class="vendor-fields" id="vendorFields">
+        <label class="field-full">
+          <span>Business name</span>
+          <input type="text" name="businessName" value="<%= old.businessName || '' %>">
+        </label>
+        <label class="field-full">
+          <span>Business description</span>
+          <textarea name="businessDescription" rows="3"><%= old.businessDescription || '' %></textarea>
+        </label>
+        <label class="field-full">
+          <span>Location</span>
+          <input type="text" name="businessLocation" value="<%= old.businessLocation || '' %>" placeholder="e.g. Bekasi, Jawa Barat">
+        </label>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-full">Create account</button>
+    </form>
+
+    <p class="form-footer-link">Already have an account? <a href="/login">Log in</a></p>
+  </div>
+</div>
+
+<script>
+  (function(){
+    var roleInputs = document.querySelectorAll('input[name="role"]');
+    var vendorFields = document.getElementById('vendorFields');
+    function sync(){
+      var selected = document.querySelector('input[name="role"]:checked');
+      vendorFields.style.display = (selected && selected.value === 'vendor') ? 'block' : 'none';
+    }
+    roleInputs.forEach(function(el){ el.addEventListener('change', sync); });
+    sync();
+  })();
+</script>
+
+<%- include('../partials/footer') %>

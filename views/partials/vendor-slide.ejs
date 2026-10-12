@@ -1,0 +1,26 @@
+<a href="/?vendor=<%= v.id %>#catalog" class="vendor-slide" <%- locals.duplicate ? 'tabindex="-1"' : '' %>>
+  <div class="vendor-slide-media count-<%= v.thumbs.length %>">
+    <% v.thumbs.forEach(function(t){ %>
+      <div class="vendor-slide-img cat-<%= (t.category_id || 0) % 6 %>">
+        <span class="vendor-slide-icon"><%- categoryIcon(t.category_name) %></span>
+        <% if(t.image_url){ %>
+          <img src="<%= t.image_url %>" alt="<%= t.name %>" loading="lazy" onerror="this.remove()">
+        <% } %>
+      </div>
+    <% }) %>
+  </div>
+  <div class="vendor-slide-info">
+    <img src="<%= v.logo_url %>" alt="" class="vendor-slide-logo">
+    <div class="vendor-slide-text">
+      <div class="vendor-slide-name"><%= v.business_name %></div>
+      <div class="vendor-slide-loc"><%- icon('pin') %><span><%= v.location %></span></div>
+    </div>
+    <% if(v.top){ %>
+      <span class="vendor-slide-badge">Top seller</span>
+    <% } else if(v.total_sold > 0){ %>
+      <span class="vendor-slide-badge soft"><%= v.total_sold %> sold</span>
+    <% } else { %>
+      <span class="vendor-slide-badge soft"><%= v.product_count %> products</span>
+    <% } %>
+  </div>
+</a>

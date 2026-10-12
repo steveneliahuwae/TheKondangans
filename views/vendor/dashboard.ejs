@@ -1,0 +1,43 @@
+<%- include('../partials/header', { title }) %>
+
+<div class="container narrow">
+  <div class="dashboard-header">
+    <img src="<%= vendor.logo_url %>" alt="<%= vendor.business_name %> logo" class="dashboard-logo">
+    <div>
+      <h1><%= vendor.business_name %></h1>
+      <p class="form-subtitle"><%= vendor.location %></p>
+    </div>
+  </div>
+
+  <div class="stat-cards">
+    <div class="stat-card">
+      <div class="stat-card-num"><%= productCount %></div>
+      <div class="stat-card-label">Products listed</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-num"><%= pendingOrders %></div>
+      <div class="stat-card-label">Pending orders</div>
+    </div>
+  </div>
+
+  <div class="dashboard-actions">
+    <a href="/vendor/products/new" class="btn btn-primary">Add a product</a>
+    <a href="/vendor/products" class="btn btn-ghost">Manage products</a>
+    <a href="/vendor/profile" class="btn btn-ghost">Edit business profile</a>
+    <a href="/orders" class="btn btn-ghost">View orders</a>
+  </div>
+
+  <% if(recentProducts.length > 0){ %>
+    <h2>Recently added</h2>
+    <div class="simple-list">
+      <% recentProducts.forEach(function(p){ %>
+        <div class="simple-list-row">
+          <span><%= p.name %></span>
+          <span><%= formatIDR(p.price) %></span>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../partials/footer') %>

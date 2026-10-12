@@ -1,0 +1,37 @@
+<%- include('../partials/header', { title }) %>
+
+<div class="container narrow">
+  <div class="page-head-row">
+    <h1>My products</h1>
+    <a href="/vendor/products/new" class="btn btn-primary">Add product</a>
+  </div>
+
+  <% if(products.length === 0){ %>
+    <div class="empty-state">
+      <p>You haven't listed any products yet.</p>
+      <a href="/vendor/products/new" class="btn btn-primary">Add your first product</a>
+    </div>
+  <% } else { %>
+    <div class="vendor-product-list">
+      <% products.forEach(function(p){ %>
+        <div class="vendor-product-row <%= !p.is_active ? 'inactive' : '' %>">
+          <div class="vendor-product-info">
+            <div class="vendor-product-name"><%= p.name %><% if(!p.is_active){ %> <span class="tag-muted">Hidden</span><% } %></div>
+            <div class="vendor-product-meta"><%= formatIDR(p.price) %> · <%= p.stock %> in stock</div>
+          </div>
+          <div class="vendor-product-actions">
+            <a href="/vendor/products/<%= p.id %>/edit" class="btn btn-ghost btn-small">Edit</a>
+            <form action="/vendor/products/<%= p.id %>/toggle" method="POST" class="inline-form">
+              <button type="submit" class="btn btn-ghost btn-small"><%= p.is_active ? 'Hide' : 'Unhide' %></button>
+            </form>
+            <form action="/vendor/products/<%= p.id %>/delete" method="POST" class="inline-form" onsubmit="return confirm('Delete this product permanently?');">
+              <button type="submit" class="btn btn-ghost btn-small btn-danger">Delete</button>
+            </form>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../partials/footer') %>
